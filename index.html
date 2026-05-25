@@ -6,6 +6,9 @@
   <title>FORGE — Running App</title>
   <meta name="description" content="FORGE: Tu compañero de running inteligente. Registra tus carreras, analiza tu rendimiento y supera tus límites." />
 
+  <!-- SVG Favicon -->
+  <link rel="icon" type="image/svg+xml" href="data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 400 400'%3E%3Ccircle cx='200' cy='200' r='190' fill='%2323271a' stroke='%23748c41' stroke-width='4'/%3E%3Cpolygon points='200,105 270,145 270,225 200,265 130,225 130,145' fill='%2323271a' stroke='%23748c41' stroke-width='5.5'/%3E%3C/svg%3E" />
+
   <!-- Google Fonts -->
   <link rel="preconnect" href="https://fonts.googleapis.com" />
   <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
@@ -170,23 +173,21 @@
 
     .login-logo {
       display: flex;
+      flex-direction: column;
       align-items: center;
-      gap: 14px;
-      margin-bottom: 8px;
+      justify-content: center;
+      margin-bottom: 16px;
     }
 
     .login-logo-text {
-      font-family: 'Bebas Neue', sans-serif;
-      font-size: 52px;
-      color: var(--accent-green);
-      line-height: 1;
-      text-shadow: 0 0 30px var(--accent-glow);
+      display: none;
     }
 
     .login-tagline {
       font-size: 15px;
       font-style: italic;
       color: var(--text-secondary);
+      text-align: center;
       margin-bottom: 40px;
     }
 
@@ -1763,16 +1764,46 @@ function LoginScreen({ onLogin, theme, onToggleTheme }) {
       <div className="login-container">
         {/* Logo */}
         <div className="login-logo anim-entry">
-          <svg width="44" height="44" viewBox="0 0 44 44" fill="none">
-            {/* Running figure SVG */}
-            <circle cx="28" cy="8" r="4" fill="var(--accent-green)" />
-            <path d="M22 14 L28 12 L32 18 L38 16" stroke="var(--accent-green)" strokeWidth="2.5" strokeLinecap="round" strokeLinejoin="round" fill="none"/>
-            <path d="M28 12 L26 22 L20 28" stroke="var(--accent-green)" strokeWidth="2.5" strokeLinecap="round" strokeLinejoin="round" fill="none"/>
-            <path d="M26 22 L32 30" stroke="var(--accent-green)" strokeWidth="2.5" strokeLinecap="round" strokeLinejoin="round" fill="none"/>
-            <path d="M20 28 L16 36" stroke="var(--accent-green)" strokeWidth="2.5" strokeLinecap="round" strokeLinejoin="round" fill="none"/>
-            <path d="M32 30 L36 38" stroke="var(--accent-green)" strokeWidth="2.5" strokeLinecap="round" strokeLinejoin="round" fill="none"/>
+          <svg width="160" height="160" viewBox="0 0 400 400" fill="none" style={{ filter: 'drop-shadow(0 10px 20px rgba(0,0,0,0.3))' }}>
+            {/* Círculo de fondo */}
+            <circle cx="200" cy="200" r="190" fill="#23271a" stroke="#748c41" strokeWidth="4" />
+            
+            {/* Anillo interior decorativo */}
+            <circle cx="200" cy="200" r="178" fill="none" stroke="#748c41" strokeWidth="1.5" opacity="0.6" />
+
+            {/* Hebilla superior */}
+            <rect x="175" y="32" width="50" height="12" rx="3" fill="#c3a763" stroke="#927b40" strokeWidth="1.5" />
+            <rect x="183" y="36" width="34" height="4" rx="2" fill="#23271a" />
+
+            {/* Cinta (Franjas degradadas) */}
+            <path d="M 160 44 L 176 44 L 200 102 Z" fill="#3f561d" />
+            <path d="M 176 44 L 192 44 L 200 102 Z" fill="#839d3f" />
+            <path d="M 192 44 L 208 44 L 200 102 Z" fill="#a5c363" />
+            <path d="M 208 44 L 224 44 L 200 102 Z" fill="#839d3f" />
+            <path d="M 224 44 L 240 44 L 200 102 Z" fill="#3f561d" />
+            
+            {/* Anillo de conexión inferior */}
+            <rect x="192" y="98" width="16" height="6" rx="1.5" fill="#c3a763" />
+
+            {/* Medalla Hexagonal */}
+            <polygon points="200,105 270,145 270,225 200,265 130,225 130,145" fill="#23271a" stroke="#748c41" strokeWidth="5.5" strokeLinejoin="round" />
+
+            {/* Ruta de running */}
+            <path d="M 160 215 L 160 190 L 182 170 L 205 170 L 218 140 L 230 160 L 230 178 L 216 178 L 226 190 L 246 190" fill="none" stroke="#748c41" strokeWidth="4.5" strokeLinecap="round" strokeLinejoin="round" />
+
+            {/* Círculo de inicio de ruta */}
+            <circle cx="160" cy="215" r="7" fill="#23271a" stroke="#748c41" strokeWidth="2.5" />
+            <circle cx="160" cy="215" r="2.5" fill="#748c41" />
+
+            {/* Estrella de fin de ruta */}
+            <polygon points="254,180 257.5,187 265,187 259,191.5 261,198 254,194 247,198 249,191.5 243,187 250.5,187" fill="#748c41" />
+
+            {/* Texto "FORGE" */}
+            <text x="200" y="325" fill="#edeae0" fontSize="54" fontFamily="'Bebas Neue', sans-serif" fontWeight="bold" textAnchor="middle" letterSpacing="6">FORGE</text>
+
+            {/* Texto "FINISHER CHALLENGES" */}
+            <text x="200" y="358" fill="#748c41" fontSize="13.5" fontFamily="'DM Sans', sans-serif" fontWeight="500" textAnchor="middle" letterSpacing="4.5">FINISHER CHALLENGES</text>
           </svg>
-          <span className="login-logo-text">FORGE</span>
         </div>
 
         <p className="login-tagline anim-entry">Cada kilómetro cuenta.</p>
