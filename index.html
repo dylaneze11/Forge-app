@@ -618,6 +618,38 @@
       pointer-events: none;
     }
 
+    .gps-locating-overlay {
+      position: absolute;
+      top: 0;
+      left: 0;
+      width: 100%;
+      height: 100%;
+      z-index: 1001;
+      background: rgba(10, 10, 15, 0.85);
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      justify-content: center;
+      gap: 12px;
+      color: #fff;
+      font-size: 13px;
+      font-weight: 500;
+    }
+
+    .gps-locating-spinner {
+      width: 28px;
+      height: 28px;
+      border: 3px solid rgba(0, 255, 136, 0.1);
+      border-top: 3px solid var(--accent-green);
+      border-radius: 50%;
+      animation: spin 1s linear infinite;
+    }
+
+    @keyframes spin {
+      0% { transform: rotate(0deg); }
+      100% { transform: rotate(360deg); }
+    }
+
     /* Metrics Panel */
     .metrics-panel {
       flex: 1;
@@ -1991,6 +2023,7 @@ function RunScreen({ username, onFinish, theme, onToggleTheme }) {
   const [muted, setMuted] = useState(getMuted());
   const [isDemoMode, setIsDemoMode] = useState(false);
   const [showConfirm, setShowConfirm] = useState(false);
+  const [isLocating, setIsLocating]   = useState(true);
 
   // Metric flash states
   const [flashTime, setFlashTime] = useState(false);
@@ -2123,6 +2156,8 @@ function RunScreen({ username, onFinish, theme, onToggleTheme }) {
     const map = mapRef.current;
     if (!map) return;
 
+    setIsLocating(false);
+
     const newPoint = { lat, lng, timestamp };
 
     // Compute new distance
@@ -2196,7 +2231,7 @@ function RunScreen({ username, onFinish, theme, onToggleTheme }) {
 
     // Pan map to follow user
     map.panTo([lat, lng], { animate: true, duration: 0.5 });
-  }, []);
+  }, [setIsLocating]);
 
   // ---- START RUN ----
   const startRun = useCallback((map) => {
@@ -2210,25 +2245,39 @@ function RunScreen({ username, onFinish, theme, onToggleTheme }) {
 
     // Try GPS
     if (navigator.geolocation) {
+      if (watchIdRef.current !== null) {
+        navigator.geolocation.clearWatch(watchIdRef.current);
+      }
+
       watchIdRef.current = navigator.geolocation.watchPosition(
         (pos) => {
+          setIsDemoMode(false);
           addPoint(pos.coords.latitude, pos.coords.longitude, Date.now());
         },
         (err) => {
           console.warn('GPS error:', err.code, err.message);
-          // Fallback to demo mode
-          startDemoMode();
+          
+          if (err.code === 1) { // PERMISSION_DENIED
+            speak('Permiso de ubicación denegado. Se activará el modo simulación.');
+            startDemoMode();
+          } else {
+            // TIMEOUT (code 3) or POSITION_UNAVAILABLE (code 2)
+            // Fallback after 30 seconds of failure
+            speak('No se pudo obtener la ubicación GPS. Iniciando modo simulación.');
+            startDemoMode();
+          }
         },
-        { enableHighAccuracy: true, maximumAge: 0, timeout: 5000 }
+        { enableHighAccuracy: true, maximumAge: 0, timeout: 30000 }
       );
     } else {
       startDemoMode();
     }
-  }, [addPoint, startTimer]);
+  }, [addPoint, startTimer, startDemoMode]);
 
   // ---- DEMO MODE — Simulated GPS ----
   const startDemoMode = useCallback(() => {
     setIsDemoMode(true);
+    setIsLocating(false);
     if (watchIdRef.current !== null) {
       navigator.geolocation.clearWatch(watchIdRef.current);
       watchIdRef.current = null;
@@ -2248,7 +2297,7 @@ function RunScreen({ username, onFinish, theme, onToggleTheme }) {
       lng += stepLng;
       addPoint(lat, lng, Date.now());
     }, 1000);
-  }, [addPoint]);
+  }, [addPoint, setIsLocating]);
 
   // ---- PAUSE ----
   const handlePause = useCallback(() => {
@@ -2356,6 +2405,12 @@ function RunScreen({ username, onFinish, theme, onToggleTheme }) {
       {/* Map */}
       <div id="run-map-container">
         <div id="run-map"></div>
+        {isLocating && !isDemoMode && (
+          <div className="gps-locating-overlay">
+            <div className="gps-locating-spinner"></div>
+            <span>Buscando señal GPS...</span>
+          </div>
+        )}
         {isDemoMode && (
           <div className="gps-demo-badge">📡 MODO DEMO — Buenos Aires</div>
         )}
