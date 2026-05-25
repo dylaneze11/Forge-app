@@ -2052,6 +2052,8 @@ function RunScreen({ username, onFinish, theme, onToggleTheme }) {
 
   themeRef.current = theme;
 
+  const isDemoModeRef = useRef(false);
+
   // ---- FLASH HELPER ----
   const flashMetric = (setter) => {
     setter(true);
@@ -2068,7 +2070,22 @@ function RunScreen({ username, onFinish, theme, onToggleTheme }) {
       attributionControl: true,
     });
 
+    // Default view while locating
     map.setView([BA_CENTER.lat, BA_CENTER.lng], 16);
+
+    // Fast, low-power pre-localization to immediately center in the user's city
+    if (navigator.geolocation) {
+      navigator.geolocation.getCurrentPosition(
+        (pos) => {
+          if (mapRef.current && pointsRef.current.length === 0 && !mapRef.current._hasCenteredReal) {
+            map.setView([pos.coords.latitude, pos.coords.longitude], 16);
+            mapRef.current._hasCenteredReal = true;
+          }
+        },
+        () => {},
+        { enableHighAccuracy: false, timeout: 4000, maximumAge: Infinity }
+      );
+    }
 
     const tileLayer = L.tileLayer(tileUrl, {
       attribution: TILE_ATTRIBUTION,
@@ -2251,41 +2268,94 @@ function RunScreen({ username, onFinish, theme, onToggleTheme }) {
 
       watchIdRef.current = navigator.geolocation.watchPosition(
         (pos) => {
-          setIsDemoMode(false);
-          addPoint(pos.coords.latitude, pos.coords.longitude, Date.now());
+          const lat = pos.coords.latitude;
+          const lng = pos.coords.longitude;
+
+          // Auto-swap from Demo Mode to Real tracking when signal is acquired!
+          if (isDemoModeRef.current) {
+            console.log("GPS Lock acquired! Swapping to real location:", lat, lng);
+            isDemoModeRef.current = false;
+            setIsDemoMode(false);
+
+            // Stop the demo timer interval immediately
+            if (demoTimerRef.current) {
+              clearInterval(demoTimerRef.current);
+              demoTimerRef.current = null;
+            }
+
+            // Wipe out fake points and start fresh!
+            pointsRef.current = [];
+            recentPointsRef.current = [];
+            distanceRef.current = 0;
+            setDistanceKm(0);
+            setCurrentPace(null);
+            setAvgPace(null);
+
+            if (polylineRef.current) {
+              polylineRef.current.setLatLngs([]);
+            }
+            if (startMarkerRef.current) {
+              map.removeLayer(startMarkerRef.current);
+              startMarkerRef.current = null;
+            }
+            if (curMarkerRef.current) {
+              map.removeLayer(curMarkerRef.current);
+              curMarkerRef.current = null;
+            }
+
+            speak('Señal GPS establecida. Iniciando seguimiento real.');
+          }
+
+          setIsLocating(false);
+          addPoint(lat, lng, Date.now());
         },
         (err) => {
           console.warn('GPS error:', err.code, err.message);
           
           if (err.code === 1) { // PERMISSION_DENIED
             speak('Permiso de ubicación denegado. Se activará el modo simulación.');
-            startDemoMode();
+            startDemoMode(true); // Clear watch completely, user explicitly denied
           } else {
             // TIMEOUT (code 3) or POSITION_UNAVAILABLE (code 2)
-            // Fallback after 30 seconds of failure
-            speak('No se pudo obtener la ubicación GPS. Iniciando modo simulación.');
-            startDemoMode();
+            // Start simulation as temporary visual fallback, but KEEP watchPosition active!
+            if (pointsRef.current.length === 0 && !isDemoModeRef.current) {
+              speak('Señal de GPS baja. Iniciando simulación temporal.');
+              startDemoMode(false); // clearWatch = false, keep watch active!
+            }
           }
         },
         { enableHighAccuracy: true, maximumAge: 0, timeout: 30000 }
       );
     } else {
-      startDemoMode();
+      startDemoMode(true);
     }
   }, [addPoint, startTimer, startDemoMode]);
 
   // ---- DEMO MODE — Simulated GPS ----
-  const startDemoMode = useCallback(() => {
+  const startDemoMode = useCallback((clearWatch = true) => {
     setIsDemoMode(true);
+    isDemoModeRef.current = true;
     setIsLocating(false);
-    if (watchIdRef.current !== null) {
+    if (clearWatch && watchIdRef.current !== null) {
       navigator.geolocation.clearWatch(watchIdRef.current);
       watchIdRef.current = null;
     }
 
+    if (demoTimerRef.current) {
+      clearInterval(demoTimerRef.current);
+    }
+
     let angle = Math.random() * 2 * Math.PI;
+
+    // Start simulation at map center (usually user's pre-localized city)
+    const map = mapRef.current;
     let lat = BA_CENTER.lat;
     let lng = BA_CENTER.lng;
+    if (map) {
+      const center = map.getCenter();
+      lat = center.lat;
+      lng = center.lng;
+    }
 
     demoTimerRef.current = setInterval(() => {
       if (isPausedRef.current) return;
