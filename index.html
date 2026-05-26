@@ -25,6 +25,13 @@
   <!-- Leaflet JS -->
   <script src="https://unpkg.com/leaflet@1.9.4/dist/leaflet.js"></script>
 
+  <!-- NoSleep.js — Keep screen on during runs -->
+  <script src="https://unpkg.com/nosleep.js/dist/NoSleep.min.js"></script>
+
+  <!-- FORGE Hooks -->
+  <script src="hooks/useNoSleep.js"></script>
+  <script src="hooks/useRunPersistence.js"></script>
+
   <!-- Apply theme immediately to prevent flash -->
   <script>
     (function() {
@@ -1258,6 +1265,8 @@
 
 <script type="text/babel">
 const { useState, useEffect, useRef, useCallback } = React;
+const useNoSleep = window.useNoSleep || function() { return { enable: function(){}, disable: function(){}, isActive: false }; };
+const useRunPersistence = window.useRunPersistence || function() { return { savedRun: null, timeOffset: 0, clear: function(){}, acknowledgeResume: function(){} }; };
 
 /* ============================================================
    CONSTANTS & UTILITIES
@@ -2023,6 +2032,7 @@ function RunScreen({ username, onFinish, theme, onToggleTheme, initialDemoMode =
   const [muted, setMuted] = useState(getMuted());
   const [isDemoMode, setIsDemoMode] = useState(false);
   const [showConfirm, setShowConfirm] = useState(false);
+  const [showResume, setShowResume]   = useState(false);
   const [isLocating, setIsLocating]   = useState(true);
 
   // Metric flash states
@@ -2056,11 +2066,40 @@ function RunScreen({ username, onFinish, theme, onToggleTheme, initialDemoMode =
 
   const isDemoModeRef = useRef(false);
 
+  // Route points for persistence (derived from pointsRef)
+  const routePoints = pointsRef.current;
+
+  // ---- HOOKS: NoSleep + Persistence ----
+  const { enable: enableNoSleep, disable: disableNoSleep, isActive: noSleepActive } = useNoSleep();
+  const { savedRun, timeOffset, clear: clearPersistence, acknowledgeResume } = useRunPersistence({
+    elapsedSec, distanceKm, routePoints, isRunning, isPaused,
+  });
+
   // ---- FLASH HELPER ----
   const flashMetric = (setter) => {
     setter(true);
     setTimeout(() => setter(false), 450);
   };
+
+  // ---- RESUME DIALOG (al montar si hay carrera guardada) ----
+  useEffect(() => {
+    if (savedRun) {
+      setShowResume(true);
+    }
+  }, [savedRun]);
+
+  // ---- COMPENSAR TIEMPO al volver del background ----
+  useEffect(() => {
+    if (timeOffset > 0 && isRunning) {
+      elapsedRef.current += timeOffset;
+      setElapsedSec(elapsedRef.current);
+      // Re-anunciar kilómetros si aplica
+      const newKm = Math.floor(distanceRef.current);
+      if (newKm > kmAnnouncedRef.current) {
+        kmAnnouncedRef.current = newKm;
+      }
+    }
+  }, [timeOffset, isRunning]);
 
   // ---- INIT MAP ----
   useEffect(() => {
@@ -2100,6 +2139,7 @@ function RunScreen({ username, onFinish, theme, onToggleTheme, initialDemoMode =
 
     // Start run
     startRun(map);
+    enableNoSleep();
 
     return () => {
       cleanup();
@@ -2397,17 +2437,19 @@ function RunScreen({ username, onFinish, theme, onToggleTheme, initialDemoMode =
   const handlePause = useCallback(() => {
     isPausedRef.current = true;
     setIsPaused(true);
+    disableNoSleep();
     playPauseTone();
     speak('Carrera pausada.');
-  }, []);
+  }, [disableNoSleep]);
 
   // ---- RESUME ----
   const handleResume = useCallback(() => {
     isPausedRef.current = false;
     setIsPaused(false);
+    enableNoSleep();
     playResumeTone();
     speak('Reanudando.');
-  }, []);
+  }, [enableNoSleep]);
 
   // ---- STOP ----
   const handleStop = useCallback(() => {
@@ -2416,6 +2458,8 @@ function RunScreen({ username, onFinish, theme, onToggleTheme, initialDemoMode =
 
   const confirmStop = useCallback(() => {
     setShowConfirm(false);
+    disableNoSleep();
+    clearPersistence();
     const durationSec = elapsedRef.current;
     const dist = distanceRef.current;
     const points = [...pointsRef.current];
@@ -2468,7 +2512,7 @@ function RunScreen({ username, onFinish, theme, onToggleTheme, initialDemoMode =
 
     cleanup();
     onFinish(run, true);
-  }, [cleanup, onFinish]);
+  }, [cleanup, onFinish, disableNoSleep, clearPersistence]);
 
   const cancelStop = useCallback(() => {
     setShowConfirm(false);
@@ -2481,11 +2525,46 @@ function RunScreen({ username, onFinish, theme, onToggleTheme, initialDemoMode =
     setMutedPref(newVal);
   };
 
+  // ---- RESUME DIALOG HANDLERS ----
+  const handleResumeRun = () => {
+    if (!savedRun) return;
+    setShowResume(false);
+    elapsedRef.current = savedRun.elapsedSec;
+    setElapsedSec(savedRun.elapsedSec);
+    distanceRef.current = savedRun.distanceKm;
+    setDistanceKm(savedRun.distanceKm);
+    if (savedRun.isPaused) {
+      isPausedRef.current = true;
+      setIsPaused(true);
+    }
+    acknowledgeResume();
+    enableNoSleep();
+  };
+
+  const handleDiscardResume = () => {
+    setShowResume(false);
+    clearPersistence();
+    setElapsedSec(0);
+    setDistanceKm(0);
+    elapsedRef.current = 0;
+    distanceRef.current = 0;
+    pointsRef.current = [];
+    recentPointsRef.current = [];
+    if (polylineRef.current) {
+      polylineRef.current.setLatLngs([]);
+    }
+  };
+
   return (
     <div className="run-screen">
       {/* Header */}
       <div className="run-header">
-        <span className="run-header-title">⚡ FORGE RUNNING</span>
+        <div style={{ display: 'flex', alignItems: 'center', gap: 8 }}>
+          <span className="run-header-title">⚡ FORGE RUNNING</span>
+          {noSleepActive && (
+            <span style={{ fontSize: 14, color: 'var(--accent-green)', filter: 'drop-shadow(0 0 4px var(--accent-glow))' }} title="Pantalla siempre encendida activa">🔆</span>
+          )}
+        </div>
         <div className="run-header-actions">
           <button className="icon-btn" onClick={handleMuteToggle} title="Silencio" id="run-mute-btn">
             {muted ? '🔇' : '🔊'}
@@ -2555,6 +2634,27 @@ function RunScreen({ username, onFinish, theme, onToggleTheme, initialDemoMode =
       </div>
 
       {/* Confirm Dialog */}
+      {/* Resume dialog — carrera guardada detectada */}
+      {showResume && savedRun && (
+        <div className="confirm-overlay">
+          <div className="confirm-box">
+            <h3>🏃 Carrera pendiente</h3>
+            <p>
+              Tenés una carrera sin finalizar:<br />
+              <strong style={{ color: 'var(--accent-green)' }}>{(savedRun.distanceKm || 0).toFixed(2)} km</strong> en{' '}
+              <strong>{formatTime(savedRun.elapsedSec || 0)}</strong>
+            </p>
+            <div className="confirm-actions">
+              <button className="confirm-cancel" onClick={handleDiscardResume} id="resume-discard-btn">Descartar</button>
+              <button className="confirm-ok" onClick={handleResumeRun} id="resume-continue-btn"
+                style={{ background: 'var(--accent-green)', color: '#000' }}>
+                Continuar
+              </button>
+            </div>
+          </div>
+        </div>
+      )}
+
       {showConfirm && (
         <div className="confirm-overlay">
           <div className="confirm-box">
