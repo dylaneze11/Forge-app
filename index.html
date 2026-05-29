@@ -261,6 +261,74 @@
       to { transform: scale(4); opacity: 0; }
     }
 
+    .login-mode-toggle {
+      display: flex;
+      gap: 0;
+      border: 1px solid var(--border);
+      border-radius: 6px;
+      overflow: hidden;
+      margin-bottom: 8px;
+    }
+
+    .login-mode-btn {
+      flex: 1;
+      padding: 10px;
+      background: var(--input-bg);
+      border: none;
+      color: var(--text-secondary);
+      font-family: 'DM Sans', sans-serif;
+      font-size: 13px;
+      font-weight: 500;
+      cursor: pointer;
+      transition: background 0.2s, color 0.2s;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      gap: 5px;
+    }
+
+    .login-mode-btn.active {
+      background: var(--accent-green);
+      color: #000;
+      font-weight: 600;
+    }
+
+    .login-mode-btn:not(.active):hover {
+      background: var(--bg-surface-hover);
+    }
+
+    .login-admin-email {
+      background: var(--input-bg);
+      border: 1px solid var(--border);
+      border-radius: 6px;
+      padding: 14px 16px;
+      font-family: 'DM Sans', sans-serif;
+      font-size: 14px;
+      color: var(--text-primary);
+      display: flex;
+      align-items: center;
+      gap: 8px;
+    }
+
+    .login-admin-email-icon {
+      font-size: 16px;
+      flex-shrink: 0;
+    }
+
+    .login-admin-email-text {
+      flex: 1;
+      font-weight: 500;
+    }
+
+    .login-admin-email-badge {
+      font-size: 10px;
+      padding: 2px 8px;
+      border-radius: 20px;
+      background: rgba(0,255,136,0.12);
+      color: var(--accent-green);
+      font-weight: 600;
+    }
+
     .login-hint {
       font-size: 12px;
       color: var(--text-secondary);
@@ -1831,7 +1899,8 @@ function Toast({ message, onDone }) {
    SCREEN 1 — LOGIN
 ============================================================ */
 
-function LoginScreen({ onLogin, theme, onToggleTheme }) {
+function LoginScreen({ onLogin, onLoginAdmin, theme, onToggleTheme }) {
+  const [loginMode, setLoginMode] = useState('user');
   const [username, setUsername] = useState('');
   const [password, setPassword] = useState('');
   const [error, setError]       = useState('');
@@ -1839,7 +1908,7 @@ function LoginScreen({ onLogin, theme, onToggleTheme }) {
   const ADMIN_EMAIL = 'seoanedylan10@gmail.com';
   const ADMIN_PASS  = 'Forge2709@';
 
-  const handleSubmit = (e) => {
+  const handleUserSubmit = (e) => {
     e.preventDefault();
     const trimUser = username.trim();
     if (!trimUser || !password) {
@@ -1848,24 +1917,6 @@ function LoginScreen({ onLogin, theme, onToggleTheme }) {
     }
     if (trimUser.length < 2) {
       setError('El nombre debe tener al menos 2 caracteres.');
-      return;
-    }
-
-    if (trimUser === ADMIN_EMAIL) {
-      if (password !== ADMIN_PASS) {
-        setError('Credenciales de administrador incorrectas.');
-        return;
-      }
-      const data = getUsers();
-      if (!data.usuarios[ADMIN_EMAIL]) {
-        data.usuarios[ADMIN_EMAIL] = { password: ADMIN_PASS, registros: [] };
-        saveUsers(data);
-      } else if (data.usuarios[ADMIN_EMAIL].password !== ADMIN_PASS) {
-        data.usuarios[ADMIN_EMAIL].password = ADMIN_PASS;
-        saveUsers(data);
-      }
-      setSession(trimUser);
-      onLogin(trimUser);
       return;
     }
 
@@ -1882,6 +1933,28 @@ function LoginScreen({ onLogin, theme, onToggleTheme }) {
 
     setSession(trimUser);
     onLogin(trimUser);
+  };
+
+  const handleAdminSubmit = (e) => {
+    e.preventDefault();
+    if (password !== ADMIN_PASS) {
+      setError('Contraseña de administrador incorrecta.');
+      return;
+    }
+    const data = getUsers();
+    if (!data.usuarios[ADMIN_EMAIL]) {
+      data.usuarios[ADMIN_EMAIL] = { password: ADMIN_PASS, registros: [] };
+      saveUsers(data);
+    }
+    setSession(ADMIN_EMAIL);
+    onLoginAdmin(ADMIN_EMAIL);
+  };
+
+  const switchMode = (mode) => {
+    setLoginMode(mode);
+    setError('');
+    setPassword('');
+    setUsername('');
   };
 
   return (
@@ -1917,32 +1990,65 @@ function LoginScreen({ onLogin, theme, onToggleTheme }) {
 
         <p className="login-tagline anim-entry">Cada kilómetro cuenta.</p>
 
-        <form className="login-form" onSubmit={handleSubmit}>
-          <input
-            className="form-input anim-entry"
-            type="text"
-            placeholder="Nombre de usuario o email"
-            value={username}
-            onChange={e => { setUsername(e.target.value); setError(''); }}
-            autoComplete="username"
-            autoCapitalize="none"
-          />
-          <input
-            className="form-input anim-entry"
-            type="password"
-            placeholder="Contraseña"
-            value={password}
-            onChange={e => { setPassword(e.target.value); setError(''); }}
-            autoComplete="current-password"
-          />
-          {error && <div className="login-error anim-entry">{error}</div>}
-          <button className="btn-primary anim-entry" type="submit" onClick={addRipple}>
-            COMENZAR
-          </button>
-          <p className="login-hint anim-entry">
-            ¿Primera vez? Tu cuenta se crea automáticamente.
-          </p>
-        </form>
+        {/* Mode toggle */}
+        <div className="login-mode-toggle anim-entry">
+          <button
+            className={`login-mode-btn ${loginMode === 'user' ? 'active' : ''}`}
+            onClick={() => switchMode('user')}
+          >👤 Usuario</button>
+          <button
+            className={`login-mode-btn ${loginMode === 'admin' ? 'active' : ''}`}
+            onClick={() => switchMode('admin')}
+          >🔑 Administrador</button>
+        </div>
+
+        {loginMode === 'user' ? (
+          <form className="login-form" onSubmit={handleUserSubmit}>
+            <input
+              className="form-input anim-entry"
+              type="text"
+              placeholder="Nombre de usuario"
+              value={username}
+              onChange={e => { setUsername(e.target.value); setError(''); }}
+              autoComplete="username"
+              autoCapitalize="none"
+            />
+            <input
+              className="form-input anim-entry"
+              type="password"
+              placeholder="Contraseña"
+              value={password}
+              onChange={e => { setPassword(e.target.value); setError(''); }}
+              autoComplete="current-password"
+            />
+            {error && <div className="login-error anim-entry">{error}</div>}
+            <button className="btn-primary anim-entry" type="submit" onClick={addRipple}>
+              COMENZAR
+            </button>
+            <p className="login-hint anim-entry">¿Primera vez? Tu cuenta se crea automáticamente.</p>
+          </form>
+        ) : (
+          <form className="login-form" onSubmit={handleAdminSubmit}>
+            <div className="login-admin-email anim-entry">
+              <span className="login-admin-email-icon">📧</span>
+              <span className="login-admin-email-text">{ADMIN_EMAIL}</span>
+              <span className="login-admin-email-badge">Admin</span>
+            </div>
+            <input
+              className="form-input anim-entry"
+              type="password"
+              placeholder="Contraseña de administrador"
+              value={password}
+              onChange={e => { setPassword(e.target.value); setError(''); }}
+              autoComplete="current-password"
+            />
+            {error && <div className="login-error anim-entry">{error}</div>}
+            <button className="btn-primary anim-entry" type="submit" onClick={addRipple}>
+              INGRESAR AL PANEL ADMIN
+            </button>
+            <p className="login-hint anim-entry">Acceso exclusivo para administradores.</p>
+          </form>
+        )}
       </div>
     </div>
   );
@@ -2981,6 +3087,11 @@ function App() {
     navigateTo('registro');
   };
 
+  const handleLoginAdmin = (user) => {
+    setUsername(user);
+    navigateTo('admin');
+  };
+
   const handleLogout = () => {
     setSession(null);
     setUsername('');
@@ -2995,7 +3106,7 @@ function App() {
   return (
     <div className={screenClass}>
       {screen === 'login' && (
-        <LoginScreen onLogin={handleLogin} {...sharedProps} />
+        <LoginScreen onLogin={handleLogin} onLoginAdmin={handleLoginAdmin} {...sharedProps} />
       )}
       {screen === 'registro' && (
         <RegistroScreen
