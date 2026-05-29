@@ -604,6 +604,518 @@
     ::-webkit-scrollbar-thumb:hover {
       background: var(--accent-green);
     }
+
+    /* ============================================================
+       USER DETAIL SCREEN — Mi Actividad
+    ============================================================ */
+    .detail-screen {
+      width: 100%;
+      height: 100%;
+      background: var(--bg-primary);
+      display: flex;
+      flex-direction: column;
+      overflow-y: auto;
+    }
+
+    .detail-topbar {
+      display: flex;
+      align-items: center;
+      gap: 10px;
+      padding: 12px 16px;
+      border-bottom: 1px solid var(--border);
+      background: var(--bg-primary);
+      position: sticky;
+      top: 0;
+      z-index: 10;
+    }
+
+    .detail-back-btn {
+      display: flex;
+      align-items: center;
+      gap: 5px;
+      font-size: 12px;
+      color: var(--text-secondary);
+      cursor: pointer;
+      padding: 5px 10px;
+      border-radius: 6px;
+      border: 1px solid var(--border);
+      background: transparent;
+      font-family: 'DM Sans', sans-serif;
+      transition: border 0.2s;
+    }
+    .detail-back-btn:hover {
+      border-color: var(--accent-green);
+    }
+
+    .detail-topbar-title {
+      font-size: 14px;
+      font-weight: 500;
+      color: var(--text-primary);
+    }
+
+    .detail-content {
+      padding: 16px;
+    }
+
+    /* Hero */
+    .detail-hero {
+      background: var(--bg-surface);
+      border: 1px solid var(--border);
+      border-radius: 10px;
+      padding: 18px;
+      display: flex;
+      align-items: flex-start;
+      gap: 14px;
+      margin-bottom: 14px;
+    }
+
+    .detail-avatar {
+      width: 50px;
+      height: 50px;
+      border-radius: 50%;
+      background: var(--accent-green);
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      color: #000;
+      font-size: 18px;
+      font-weight: 600;
+      flex-shrink: 0;
+    }
+
+    .detail-hero-info {
+      flex: 1;
+      min-width: 0;
+    }
+
+    .detail-hero-name {
+      font-size: 17px;
+      font-weight: 600;
+      color: var(--text-primary);
+    }
+
+    .detail-hero-sub {
+      font-size: 11px;
+      color: var(--text-secondary);
+      margin-top: 2px;
+    }
+
+    .detail-tags {
+      display: flex;
+      gap: 5px;
+      margin-top: 7px;
+      flex-wrap: wrap;
+    }
+
+    .d-tag {
+      font-size: 10px;
+      padding: 2px 8px;
+      border-radius: 20px;
+      font-weight: 500;
+    }
+    .d-tag.active {
+      background: rgba(0,255,136,0.12);
+      color: var(--accent-green);
+    }
+    .d-tag.info {
+      background: rgba(0,184,255,0.12);
+      color: #00b8ff;
+    }
+    .d-tag.warn {
+      background: rgba(255,184,0,0.12);
+      color: #ffb800;
+    }
+
+    /* Stats grid */
+    .detail-stats {
+      display: grid;
+      grid-template-columns: repeat(4, 1fr);
+      gap: 1px;
+      background: var(--border);
+      border-radius: 8px;
+      overflow: hidden;
+      border: 1px solid var(--border);
+      margin-bottom: 16px;
+    }
+
+    .detail-stat-item {
+      background: var(--bg-surface);
+      padding: 11px 12px;
+    }
+    .detail-stat-label {
+      font-size: 9px;
+      color: var(--text-secondary);
+      text-transform: uppercase;
+      letter-spacing: 0.06em;
+      margin-bottom: 3px;
+    }
+    .detail-stat-val {
+      font-size: 17px;
+      font-weight: 600;
+      color: var(--text-primary);
+    }
+    .detail-stat-sub {
+      font-size: 9px;
+      color: var(--text-secondary);
+      margin-top: 1px;
+    }
+
+    /* Tabs */
+    .detail-tabs-row {
+      display: flex;
+      gap: 0;
+      border-bottom: 1px solid var(--border);
+      background: var(--bg-surface);
+      border-radius: 10px 10px 0 0;
+      border: 1px solid var(--border);
+      border-bottom: none;
+    }
+
+    .detail-tab {
+      padding: 10px 16px;
+      font-size: 12px;
+      cursor: pointer;
+      color: var(--text-secondary);
+      border-bottom: 2px solid transparent;
+      display: flex;
+      align-items: center;
+      gap: 5px;
+      font-weight: 500;
+      transition: color 0.2s, border 0.2s;
+    }
+    .detail-tab.active {
+      color: var(--accent-green);
+      border-bottom-color: var(--accent-green);
+    }
+    .detail-tab:hover {
+      color: var(--text-primary);
+    }
+    .detail-tab-count {
+      font-size: 9px;
+      background: var(--bg-surface-hover);
+      border-radius: 20px;
+      padding: 1px 5px;
+      color: var(--text-secondary);
+    }
+
+    .detail-panel {
+      background: var(--bg-surface);
+      border: 1px solid var(--border);
+      border-top: none;
+      border-radius: 0 0 10px 10px;
+      overflow: hidden;
+      margin-bottom: 16px;
+    }
+
+    /* Filter pills */
+    .detail-filter {
+      padding: 10px 16px;
+      border-bottom: 1px solid var(--border);
+      display: flex;
+      align-items: center;
+      gap: 6px;
+      flex-wrap: wrap;
+    }
+
+    .detail-filter-label {
+      font-size: 11px;
+      color: var(--text-secondary);
+      margin-right: 2px;
+    }
+
+    .d-pill {
+      font-size: 10px;
+      padding: 3px 9px;
+      border-radius: 20px;
+      cursor: pointer;
+      border: 1px solid var(--border);
+      color: var(--text-secondary);
+      background: transparent;
+      font-family: 'DM Sans', sans-serif;
+      transition: all 0.2s;
+    }
+    .d-pill.active {
+      background: rgba(0,255,136,0.1);
+      color: var(--accent-green);
+      border-color: var(--accent-green);
+    }
+    .d-pill:hover {
+      border-color: var(--accent-green);
+    }
+
+    /* History items */
+    .d-history-item {
+      display: flex;
+      align-items: center;
+      gap: 10px;
+      padding: 11px 16px;
+      border-bottom: 1px solid var(--border);
+      cursor: pointer;
+      transition: background 0.1s;
+    }
+    .d-history-item:last-child { border-bottom: none; }
+    .d-history-item:hover { background: var(--bg-surface-hover); }
+
+    .d-act-icon {
+      width: 34px;
+      height: 34px;
+      border-radius: 8px;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      flex-shrink: 0;
+      font-size: 16px;
+    }
+    .d-act-icon.bici { background: rgba(0,184,255,0.1); }
+    .d-act-icon.corriendo { background: rgba(255,62,108,0.1); }
+
+    .d-date-col {
+      width: 62px;
+      flex-shrink: 0;
+    }
+    .d-date-day {
+      font-size: 11px;
+      font-weight: 500;
+      color: var(--text-primary);
+    }
+    .d-date-time {
+      font-size: 9px;
+      color: var(--text-secondary);
+    }
+
+    .d-act-main {
+      flex: 1;
+      min-width: 0;
+    }
+    .d-act-title {
+      font-size: 12px;
+      font-weight: 500;
+      color: var(--text-primary);
+    }
+    .d-act-meta {
+      font-size: 10px;
+      color: var(--text-secondary);
+      margin-top: 2px;
+      display: flex;
+      gap: 8px;
+      flex-wrap: wrap;
+    }
+
+    .d-km-pill {
+      font-size: 13px;
+      font-weight: 600;
+      color: var(--accent-green);
+      min-width: 48px;
+      text-align: right;
+    }
+    .d-km-pill.warn {
+      color: #ffb800;
+    }
+
+    .d-verify {
+      width: 6px;
+      height: 6px;
+      border-radius: 50%;
+      flex-shrink: 0;
+    }
+    .d-verify.ok { background: var(--accent-green); }
+    .d-verify.warn { background: #ffb800; }
+
+    .d-mini-map {
+      width: 60px;
+      height: 36px;
+      border-radius: 4px;
+      overflow: hidden;
+      background: rgba(0,255,136,0.06);
+      border: 1px solid var(--border);
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      flex-shrink: 0;
+    }
+
+    /* Photos grid */
+    .d-banner {
+      margin: 10px 16px;
+      padding: 8px 12px;
+      background: rgba(255,184,0,0.08);
+      border: 1px solid rgba(255,184,0,0.3);
+      border-radius: 6px;
+      display: flex;
+      align-items: center;
+      gap: 8px;
+      font-size: 11px;
+      color: #ffb800;
+    }
+
+    .d-photos-header {
+      padding: 10px 16px;
+      border-bottom: 1px solid var(--border);
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+    }
+    .d-photos-count {
+      font-size: 11px;
+      color: var(--text-secondary);
+    }
+
+    .d-photos-grid {
+      display: grid;
+      grid-template-columns: repeat(3, 1fr);
+      gap: 1px;
+      background: var(--border);
+    }
+
+    .d-photo-card {
+      position: relative;
+      aspect-ratio: 1;
+      overflow: hidden;
+      cursor: pointer;
+      background: var(--bg-surface-hover);
+      display: flex;
+      align-items: center;
+      justify-content: center;
+    }
+
+    .d-photo-img {
+      width: 100%;
+      height: 100%;
+      object-fit: cover;
+    }
+
+    .d-photo-placeholder {
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      justify-content: center;
+      width: 100%;
+      height: 100%;
+      gap: 4px;
+    }
+    .d-photo-placeholder span {
+      font-size: 8px;
+      opacity: 0.7;
+    }
+
+    .d-photo-badge {
+      position: absolute;
+      top: 5px;
+      right: 5px;
+      background: rgba(0,0,0,0.5);
+      color: #fff;
+      font-size: 9px;
+      padding: 1px 5px;
+      border-radius: 20px;
+    }
+
+    .d-photo-verify {
+      position: absolute;
+      top: 5px;
+      left: 5px;
+      width: 16px;
+      height: 16px;
+      border-radius: 50%;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      font-size: 9px;
+    }
+    .d-photo-verify.ok { background: var(--accent-green); color: #000; }
+    .d-photo-verify.warn { background: #ffb800; color: #000; }
+
+    .d-photo-overlay {
+      position: absolute;
+      inset: 0;
+      background: rgba(0,0,0,0.35);
+      display: flex;
+      align-items: flex-end;
+      padding: 6px;
+      opacity: 0;
+      transition: opacity 0.15s;
+    }
+    .d-photo-card:hover .d-photo-overlay { opacity: 1; }
+    .d-photo-overlay-text {
+      font-size: 9px;
+      color: #fff;
+    }
+
+    .d-load-more {
+      padding: 10px 16px;
+      text-align: center;
+      border-top: 1px solid var(--border);
+    }
+
+    .d-load-btn {
+      font-size: 11px;
+      padding: 5px 14px;
+      border-radius: 6px;
+      border: 1px solid var(--border);
+      background: transparent;
+      color: var(--text-secondary);
+      cursor: pointer;
+      font-family: 'DM Sans', sans-serif;
+      transition: border 0.2s;
+    }
+    .d-load-btn:hover {
+      border-color: var(--accent-green);
+    }
+
+    /* Challenges */
+    .d-chall-item {
+      display: flex;
+      align-items: center;
+      gap: 10px;
+      padding: 12px 16px;
+      border-bottom: 1px solid var(--border);
+    }
+    .d-chall-item:last-child { border-bottom: none; }
+
+    .d-chall-icon {
+      width: 32px;
+      height: 32px;
+      border-radius: 8px;
+      background: rgba(0,255,136,0.08);
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      flex-shrink: 0;
+    }
+
+    .d-chall-info { flex: 1; min-width: 0; }
+    .d-chall-name { font-size: 12px; font-weight: 500; color: var(--text-primary); }
+    .d-chall-desc { font-size: 10px; color: var(--text-secondary); margin-top: 2px; }
+
+    .d-chall-bar {
+      height: 3px;
+      background: var(--bg-surface-hover);
+      border-radius: 2px;
+      margin-top: 5px;
+      overflow: hidden;
+      max-width: 140px;
+    }
+    .d-chall-fill {
+      height: 100%;
+      border-radius: 2px;
+      background: var(--accent-green);
+    }
+
+    .d-chall-pct {
+      font-size: 11px;
+      font-weight: 600;
+      color: var(--accent-green);
+      min-width: 32px;
+      text-align: right;
+    }
+
+    .d-chall-status {
+      font-size: 9px;
+      padding: 2px 6px;
+      border-radius: 20px;
+      font-weight: 500;
+    }
+    .d-chall-status.done { background: rgba(0,255,136,0.1); color: var(--accent-green); }
+    .d-chall-status.active { background: rgba(0,184,255,0.1); color: #00b8ff; }
   </style>
 </head>
 <body>
@@ -709,6 +1221,9 @@ function LoginScreen({ onLogin, theme, onToggleTheme }) {
   const [password, setPassword] = useState('');
   const [error, setError]       = useState('');
 
+  const ADMIN_EMAIL = 'seoanedylan10@gmail.com';
+  const ADMIN_PASS  = 'Forge2709@';
+
   const handleSubmit = (e) => {
     e.preventDefault();
     const trimUser = username.trim();
@@ -721,15 +1236,32 @@ function LoginScreen({ onLogin, theme, onToggleTheme }) {
       return;
     }
 
+    // Admin check
+    if (trimUser === ADMIN_EMAIL) {
+      if (password !== ADMIN_PASS) {
+        setError('Credenciales de administrador incorrectas.');
+        return;
+      }
+      const data = getUsers();
+      if (!data.usuarios[ADMIN_EMAIL]) {
+        data.usuarios[ADMIN_EMAIL] = { password: ADMIN_PASS, registros: [] };
+        saveUsers(data);
+      } else if (data.usuarios[ADMIN_EMAIL].password !== ADMIN_PASS) {
+        data.usuarios[ADMIN_EMAIL].password = ADMIN_PASS;
+        saveUsers(data);
+      }
+      setSession(trimUser);
+      onLogin(trimUser);
+      return;
+    }
+
     const data = getUsers();
     if (data.usuarios[trimUser]) {
-      // Existing user — verify password
       if (data.usuarios[trimUser].password !== password) {
         setError('Contraseña incorrecta. Intentá de nuevo.');
         return;
       }
     } else {
-      // New user — create account
       data.usuarios[trimUser] = { password, registros: [] };
       saveUsers(data);
     }
@@ -836,7 +1368,7 @@ function LoginScreen({ onLogin, theme, onToggleTheme }) {
    SCREEN 2 — REGISTRO DE KILÓMETROS
 ============================================================ */
 
-function RegistroScreen({ username, theme, onToggleTheme, onLogout }) {
+function RegistroScreen({ username, theme, onToggleTheme, onLogout, onViewDetail, isAdmin }) {
   const [nombre, setNombre] = useState('');
   const [email, setEmail] = useState('');
   const [tipo, setTipo] = useState('corriendo');
@@ -918,6 +1450,11 @@ function RegistroScreen({ username, theme, onToggleTheme, onLogout }) {
       <div className="registro-header">
         <span className="registro-title">FORGE</span>
         <div className="header-actions">
+          {isAdmin && (
+            <button className="icon-btn" onClick={onViewDetail} title="Mi actividad" id="registro-detail-btn" style={{ fontSize: 18 }}>
+              📊
+            </button>
+          )}
           <button className="icon-btn" onClick={onToggleTheme} title="Cambiar tema" id="registro-theme-toggle">
             {theme === 'dark' ? '☀️' : '🌙'}
           </button>
@@ -1100,8 +1637,298 @@ function RegistroScreen({ username, theme, onToggleTheme, onLogout }) {
 }
 
 /* ============================================================
-   ROOT APP — STATE MACHINE & NAVIGATION
+   SCREEN 3 — MI ACTIVIDAD / USER DETAIL
 ============================================================ */
+
+function UserDetailScreen({ username, onBack, theme, onToggleTheme }) {
+  const [tab, setTab] = useState('historial');
+  const [filter, setFilter] = useState('todos');
+  const [showAll, setShowAll] = useState(false);
+  const [userData, setUserData] = useState(null);
+
+  useEffect(() => {
+    const data = getUsers();
+    const u = data.usuarios[username];
+    if (u) setUserData(u);
+  }, [username]);
+
+  if (!userData) return null;
+
+  const registros = userData.registros || [];
+  const totalKm = registros.reduce((s, r) => s + (r.kilometros || 0), 0);
+  const now = new Date();
+  const thisMonth = now.getMonth();
+  const thisYear = now.getFullYear();
+  const monthKm = registros
+    .filter(r => { const d = new Date(r.fecha); return d.getMonth() === thisMonth && d.getFullYear() === thisYear; })
+    .reduce((s, r) => s + (r.kilometros || 0), 0);
+  const photos = registros.filter(r => r.foto);
+
+  let filtered = [...registros];
+  if (filter === 'bici') filtered = filtered.filter(r => r.tipo === 'bici');
+  else if (filter === 'corriendo') filtered = filtered.filter(r => r.tipo === 'corriendo');
+  else if (filter === 'con-foto') filtered = filtered.filter(r => r.foto);
+
+  const displayRegistros = showAll ? filtered : filtered.slice(0, 5);
+  const sortedPhotos = [...photos].sort((a, b) => new Date(b.fecha) - new Date(a.fecha));
+  const displayPhotos = showAll ? sortedPhotos : sortedPhotos.slice(0, 9);
+
+  const getInitials = (name) => {
+    if (!name) return username.slice(0, 2).toUpperCase();
+    return name.split(' ').map(w => w[0]).join('').toUpperCase().slice(0, 2);
+  };
+
+  const shortDate = (d) => {
+    const dt = new Date(d);
+    const months = ['ene','feb','mar','abr','may','jun','jul','ago','sep','oct','nov','dic'];
+    return `${dt.getDate()} ${months[dt.getMonth()]}`;
+  };
+
+  const shortTime = (d) => {
+    return new Date(d).toLocaleTimeString('es-AR', { hour: '2-digit', minute: '2-digit' });
+  };
+
+  const lastReg = registros.length > 0 ? registros[registros.length - 1] : null;
+  const lastRegDays = lastReg ? Math.floor((now - new Date(lastReg.fecha).getTime()) / 86400000) : null;
+
+  const kmByWeek = (() => {
+    const weeks = [0,0,0,0,0,0];
+    registros.forEach(r => {
+      const d = new Date(r.fecha);
+      const diff = Math.floor((now - d.getTime()) / 604800000);
+      if (diff >= 0 && diff < 6) weeks[5 - diff] += r.kilometros || 0;
+    });
+    return weeks;
+  })();
+
+  return (
+    <div className="detail-screen">
+      <div className="detail-topbar">
+        <button className="detail-back-btn" onClick={onBack}>← Volver</button>
+        <div>
+          <div className="detail-topbar-title">Mi Actividad</div>
+          <div style={{ fontSize: 10, color: 'var(--text-secondary)' }}>{username}</div>
+        </div>
+        <div style={{ marginLeft: 'auto', display: 'flex', gap: 6 }}>
+          <button className="icon-btn" onClick={onToggleTheme} title="Cambiar tema" style={{ width: 34, height: 34, fontSize: 14 }}>
+            {theme === 'dark' ? '☀️' : '🌙'}
+          </button>
+        </div>
+      </div>
+
+      <div className="detail-content">
+        {/* Hero */}
+        <div className="detail-hero">
+          <div className="detail-avatar">
+            {lastReg ? getInitials(lastReg.nombre) : username.slice(0, 2).toUpperCase()}
+          </div>
+          <div className="detail-hero-info">
+            <div className="detail-hero-name">{lastReg ? lastReg.nombre : username}</div>
+            <div className="detail-hero-sub">
+              {lastReg ? lastReg.email : ''} · {lastRegDays !== null ? `Último registro hace ${lastRegDays} día${lastRegDays !== 1 ? 's' : ''}` : 'Sin registros'}
+            </div>
+            <div className="detail-tags">
+              <span className="d-tag active">Activo</span>
+              {registros.some(r => r.tipo === 'bici') && <span className="d-tag info">Ciclista</span>}
+              {registros.some(r => r.tipo === 'corriendo') && <span className="d-tag warn">Runner</span>}
+              <span className="d-tag active">{registros.length} registros</span>
+            </div>
+          </div>
+          <div style={{ display: 'flex', flexDirection: 'column', alignItems: 'flex-end', gap: 4 }}>
+            <div style={{ display: 'flex', alignItems: 'flex-end', gap: 2, height: 32 }}>
+              {kmByWeek.map((v, i) => (
+                <div key={i}
+                  style={{
+                    width: 8,
+                    height: Math.max(4, Math.min(32, (v / (Math.max(...kmByWeek) || 1)) * 30)),
+                    borderRadius: '2px 2px 0 0',
+                    background: i === 5 ? 'var(--accent-green)' : 'var(--bg-surface-hover)',
+                    border: i === 5 ? '1px solid var(--accent-green)' : '1px solid var(--border)',
+                  }}
+                />
+              ))}
+            </div>
+            <div style={{ fontSize: 9, color: 'var(--text-secondary)' }}>6 semanas</div>
+          </div>
+        </div>
+
+        {/* Stats grid */}
+        <div className="detail-stats">
+          <div className="detail-stat-item">
+            <div className="detail-stat-label">Km totales</div>
+            <div className="detail-stat-val">{totalKm.toFixed(1)}</div>
+            <div className="detail-stat-sub">desde el inicio</div>
+          </div>
+          <div className="detail-stat-item">
+            <div className="detail-stat-label">Km este mes</div>
+            <div className="detail-stat-val">{monthKm.toFixed(1)}</div>
+            <div className="detail-stat-sub">{now.toLocaleString('es-AR', { month: 'long' })}</div>
+          </div>
+          <div className="detail-stat-item">
+            <div className="detail-stat-label">Registros</div>
+            <div className="detail-stat-val">{registros.length}</div>
+            <div className="detail-stat-sub">
+              {registros.filter(r => r.tipo === 'bici').length} bici · {registros.filter(r => r.tipo === 'corriendo').length} running
+            </div>
+          </div>
+          <div className="detail-stat-item">
+            <div className="detail-stat-label">Evidencias</div>
+            <div className="detail-stat-val">{photos.length}</div>
+            <div className="detail-stat-sub">{photos.length} fotos subidas</div>
+          </div>
+        </div>
+
+        {/* Tabs */}
+        <div className="detail-tabs-row">
+          <div className={`detail-tab ${tab === 'historial' ? 'active' : ''}`} onClick={() => { setTab('historial'); setShowAll(false); }}>
+            📋 Historial <span className="detail-tab-count">{registros.length}</span>
+          </div>
+          <div className={`detail-tab ${tab === 'fotos' ? 'active' : ''}`} onClick={() => { setTab('fotos'); setShowAll(false); }}>
+            📷 Fotos <span className="detail-tab-count">{photos.length}</span>
+          </div>
+          <div className={`detail-tab ${tab === 'desafios' ? 'active' : ''}`} onClick={() => { setTab('desafios'); setShowAll(false); }}>
+            🏆 Desafíos
+          </div>
+        </div>
+
+        {/* Panel: Historial */}
+        {tab === 'historial' && (
+          <div className="detail-panel">
+            <div className="detail-filter">
+              <span className="detail-filter-label">Filtrar:</span>
+              {['todos', 'bici', 'corriendo', 'con-foto'].map(f => (
+                <button key={f} className={`d-pill ${filter === f ? 'active' : ''}`} onClick={() => { setFilter(f); setShowAll(false); }}>
+                  {f === 'todos' ? 'Todos' : f === 'bici' ? '🚴 Bici' : f === 'corriendo' ? '🏃 Running' : '📷 Con foto'}
+                </button>
+              ))}
+            </div>
+
+            {displayRegistros.length === 0 ? (
+              <div className="empty-state" style={{ padding: '24px 16px' }}>
+                <div className="empty-state-title">Sin resultados</div>
+                <div className="empty-state-text">No hay registros con este filtro.</div>
+              </div>
+            ) : (
+              displayRegistros.map((r) => (
+                <div key={r.id} className="d-history-item">
+                  <div className={`d-act-icon ${r.tipo}`}>
+                    {r.tipo === 'bici' ? '🚴' : '🏃'}
+                  </div>
+                  <div className="d-date-col">
+                    <div className="d-date-day">{shortDate(r.fecha)}</div>
+                    <div className="d-date-time">{shortTime(r.fecha)}</div>
+                  </div>
+                  <div className="d-act-main">
+                    <div className="d-act-title">{r.nombre || (r.tipo === 'bici' ? 'Salida en bici' : 'Running')}</div>
+                    <div className="d-act-meta">
+                      <span>{r.nota ? r.nota.slice(0, 30) + (r.nota.length > 30 ? '…' : '') : 'Sin nota'}</span>
+                      {r.foto && <span>📷 1 foto</span>}
+                    </div>
+                  </div>
+                  <div className="d-mini-map">
+                    {r.tipo === 'bici' ? '🚴' : '🏃'}
+                  </div>
+                  <div className={`d-km-pill ${!r.foto ? 'warn' : ''}`}>
+                    {r.kilometros.toFixed(1)} km
+                  </div>
+                  <div className={`d-verify ${r.foto ? 'ok' : 'warn'}`} title={r.foto ? 'Con evidencia' : 'Sin evidencia'}></div>
+                </div>
+              ))
+            )}
+
+            {filtered.length > 5 && (
+              <div className="d-load-more">
+                <button className="d-load-btn" onClick={() => setShowAll(!showAll)}>
+                  {showAll ? 'Mostrar menos' : `Ver los ${filtered.length} registros`}
+                </button>
+              </div>
+            )}
+          </div>
+        )}
+
+        {/* Panel: Fotos */}
+        {tab === 'fotos' && (
+          <div className="detail-panel">
+            {sortedPhotos.length === 0 ? (
+              <div className="empty-state" style={{ padding: '32px 16px' }}>
+                <div className="empty-state-icon" style={{ fontSize: 32 }}>📷</div>
+                <div className="empty-state-title">Sin fotos aún</div>
+                <div className="empty-state-text">Subí fotos al registrar kilómetros para verlas acá.</div>
+              </div>
+            ) : (
+              <>
+                <div className="d-photos-header">
+                  <span className="d-photos-count">{photos.length} foto{photos.length !== 1 ? 's' : ''}</span>
+                </div>
+                <div className="d-photos-grid">
+                  {displayPhotos.map((r) => (
+                    <div key={r.id} className="d-photo-card">
+                      {r.foto && r.foto.startsWith('data:image') ? (
+                        <img src={r.foto} alt="Evidencia" className="d-photo-img" />
+                      ) : (
+                        <div className="d-photo-placeholder" style={{ background: r.tipo === 'bici' ? 'rgba(0,184,255,0.08)' : 'rgba(255,62,108,0.08)' }}>
+                          <span style={{ fontSize: 20 }}>{r.tipo === 'bici' ? '🚴' : '🏃'}</span>
+                          <span>{shortDate(r.fecha)}</span>
+                        </div>
+                      )}
+                      <div className={`d-photo-verify ${r.foto ? 'ok' : 'warn'}`}>{r.foto ? '✓' : '!'}</div>
+                      <div className="d-photo-badge">{r.kilometros.toFixed(1)} km</div>
+                      <div className="d-photo-overlay">
+                        <div className="d-photo-overlay-text">{r.nota ? r.nota.slice(0, 25) + (r.nota.length > 25 ? '…' : '') : shortDate(r.fecha)}</div>
+                      </div>
+                    </div>
+                  ))}
+                </div>
+                {photos.length > 9 && (
+                  <div className="d-load-more">
+                    <button className="d-load-btn" onClick={() => setShowAll(!showAll)}>
+                      {showAll ? 'Mostrar menos' : `Ver las ${photos.length} fotos`}
+                    </button>
+                  </div>
+                )}
+              </>
+            )}
+          </div>
+        )}
+
+        {/* Panel: Desafíos */}
+        {tab === 'desafios' && (
+          <div className="detail-panel">
+            {(() => {
+              const bikeKm = registros.filter(r => r.tipo === 'bici').reduce((s, r) => s + (r.kilometros || 0), 0);
+              const runKm = registros.filter(r => r.tipo === 'corriendo').reduce((s, r) => s + (r.kilometros || 0), 0);
+              const challenges = [
+                { name: 'Rodando en bici', desc: `${bikeKm.toFixed(0)} km de 200 km · acumulado total`, prog: Math.min(100, (bikeKm / 200) * 100), status: bikeKm >= 200 ? 'done' : 'active', icon: '🚴' },
+                { name: 'Running total', desc: `${runKm.toFixed(0)} km de 50 km · acumulado total`, prog: Math.min(100, (runKm / 50) * 100), status: runKm >= 50 ? 'done' : 'active', icon: '🏃' },
+                { name: 'Meta mensual', desc: `${monthKm.toFixed(0)} km de 100 km · ${now.toLocaleString('es-AR', { month: 'long' })}`, prog: Math.min(100, (monthKm / 100) * 100), status: monthKm >= 100 ? 'done' : 'active', icon: '📅' },
+                { name: 'Consistencia', desc: `${registros.length} de 10 registros · primera meta`, prog: Math.min(100, (registros.length / 10) * 100), status: registros.length >= 10 ? 'done' : 'active', icon: '🔥' },
+                { name: 'Desafío total', desc: `${totalKm.toFixed(0)} km de 500 km · meta global`, prog: Math.min(100, (totalKm / 500) * 100), status: totalKm >= 500 ? 'done' : 'active', icon: '🏆' },
+              ];
+              return challenges.map((ch, i) => (
+                <div key={i} className="d-chall-item">
+                  <div className="d-chall-icon">{ch.icon}</div>
+                  <div className="d-chall-info">
+                    <div className="d-chall-name">{ch.name}</div>
+                    <div className="d-chall-desc">{ch.desc}</div>
+                    <div className="d-chall-bar"><div className="d-chall-fill" style={{ width: `${ch.prog}%` }}></div></div>
+                  </div>
+                  <div className="d-chall-pct">{Math.round(ch.prog)}%</div>
+                  <span className={`d-chall-status ${ch.status}`}>{ch.status === 'done' ? 'Completado' : 'En curso'}</span>
+                </div>
+              ));
+            })()}
+          </div>
+        )}
+
+        <div style={{ height: 40 }} />
+      </div>
+    </div>
+  );
+}
+
+/* ============================================================
+   ROOT APP — STATE MACHINE & NAVIGATION
+=========================================================== */
 
 function App() {
   const [theme, setTheme]     = useState(getTheme);
@@ -1150,6 +1977,7 @@ function App() {
   const screenClass = `screen-wrapper ${transitioning ? 'screen-exit' : 'screen-enter'}`;
 
   const sharedProps = { theme, onToggleTheme: handleToggleTheme };
+  const isAdmin = username === 'seoanedylan10@gmail.com';
 
   return (
     <div className={screenClass}>
@@ -1160,6 +1988,15 @@ function App() {
         <RegistroScreen
           username={username}
           onLogout={handleLogout}
+          onViewDetail={() => navigateTo('detail')}
+          isAdmin={isAdmin}
+          {...sharedProps}
+        />
+      )}
+      {screen === 'detail' && (
+        <UserDetailScreen
+          username={username}
+          onBack={() => navigateTo('registro')}
           {...sharedProps}
         />
       )}
